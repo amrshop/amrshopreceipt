@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AMR SHOP - Customer Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Space+Mono&display=swap');
+        
+        .receipt-body { font-family: 'Inter', sans-serif; }
+        .mono-font { font-family: 'Space Mono', monospace; }
+        
+        .watermark-bg {
+            background-image: radial-gradient(#cbd5e1 0.8px, transparent 0.8px);
+            background-size: 15px 15px;
+        }
+    </style>
+</head>
+<body class="bg-[#0f172a] text-white min-h-screen p-4 flex flex-col items-center">
+
+    <div class="w-full max-w-lg mt-8 text-center">
+        <h1 class="text-3xl font-black text-blue-400 tracking-tighter uppercase mb-2">AMR SHOP</h1>
+        <p class="text-slate-400 text-xs font-bold tracking-widest uppercase">Official Recovery Portal</p>
+    </div>
+
+    <div class="w-full max-w-lg mt-8 mb-6">
+        <div class="bg-slate-800 p-4 rounded-3xl border border-slate-700 shadow-2xl">
+            <p class="text-[11px] text-blue-300 font-bold mb-3 uppercase tracking-wider text-center">Enter your Transaction ID below</p>
+            <div class="flex gap-2">
+                <input id="searchID" type="text" placeholder="e.g. AMR-TXN-12345678" class="flex-1 bg-slate-900 border border-slate-700 rounded-2xl p-4 text-sm outline-none focus:ring-2 focus:ring-blue-500 font-bold">
+                <button id="findBtn" onclick="findReceipt()" class="bg-blue-600 px-6 rounded-2xl hover:bg-blue-700 font-black transition-all shadow-lg active:scale-95">FIND</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-full max-w-lg space-y-4">
+        <div class="bg-slate-800/50 p-6 rounded-3xl border border-slate-700/50 backdrop-blur-sm">
+            <h3 class="text-blue-400 font-black text-sm mb-3 uppercase italic">প্রিয় গ্রাহক,</h3>
+            <p class="text-slate-300 text-sm leading-relaxed mb-4">
+                আপনি যদি **AMR SHOP** থেকে অলরেডি প্রোডাক্ট পেয়ে থাকেন তাহলে এই পেজটি আপনার জন্য। আপনি প্রোডাক্ট পাওয়ার সময় প্যাকেটের ভেতরে একটা রিসিপ্ট পেয়েছেন, সেই রিসিপ্টে একটা ট্রানজেকশন আইডি রয়েছে। সেটা যদি থাকে আপনার কাছে, তাহলে খুব সহজেই আপনার রিসিপ্টটি আবার উদ্ধার করতে পারবেন।
+            </p>
+            <p class="text-slate-400 text-[12px] italic border-t border-slate-700 pt-4">
+                আমাদের লক্ষ্য হলো আপনার কেনাকাটাকে আরও সহজ ও নিরাপদ করা। ডিজিটাল রিসিপ্টটি আপনার ভবিষ্যতের ওয়ারেন্টি বা যে কোনো প্রয়োজনে ব্যবহার করতে পারবেন। ধন্যবাদ আমাদের সাথে থাকার জন্য।
+            </p>
+        </div>
+
+        <a href="https://ibb.co.com/9MQ2Mfj" target="_blank" class="w-full max-w-lg block text-center bg-slate-800 hover:bg-slate-700 p-6 rounded-3xl border border-slate-700 transition-all shadow-md">
+            <div class="flex justify-between items-center text-sm font-black uppercase tracking-tighter text-blue-400">
+                <span>TXN ID কোথায় থাকে? (Sample Image)</span>
+                <span>→</span>
+            </div>
+        </a>
+    </div>
+
+    <div id="captureArea" class="fixed top-[-9999px] left-[-9999px]">
+        <div id="receiptDesign" class="w-[600px] bg-white p-0 text-black border-[12px] border-slate-100 relative overflow-hidden">
+            <div class="absolute inset-0 watermark-bg opacity-10"></div>
+            
+            <div class="relative p-10">
+                <div class="flex justify-between items-center border-b-2 border-black pb-6">
+                    <div>
+                        <h2 class="text-5xl font-black tracking-tighter leading-none text-black opacity-100">AMR SHOP</h2>
+                        <p class="text-blue-600 font-bold text-xl tracking-widest opacity-100">CHHATAK</p>
+                        <p class="text-[9px] mt-2 font-black uppercase bg-black text-white px-2 py-1 inline-block">Official Payment Receipt</p>
+                    </div>
+                    <img src="https://i.ibb.co.com/tpPPp6R3/48774.png" crossorigin="anonymous" class="w-28 h-28 object-contain">
+                </div>
+
+                <div class="mt-8 receipt-body space-y-4">
+                    <div class="flex justify-between text-[11px] font-bold text-gray-600 mono-font">
+                        <span>TXN ID: <span id="rID" class="text-black opacity-100"></span></span>
+                        <span id="rDate" class="text-black opacity-100 font-black"></span>
+                    </div>
+
+                    <div class="border-2 border-black p-6 space-y-4 bg-white shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]">
+                        <div class="flex justify-between border-b border-gray-200 pb-2">
+                            <span class="text-gray-500 font-bold uppercase text-[10px] tracking-wider">Customer Name</span>
+                            <span id="rName" class="font-black text-lg opacity-100 uppercase text-black"></span>
+                        </div>
+                        <div class="flex justify-between border-b border-gray-200 pb-2">
+                            <span class="text-gray-500 font-bold uppercase text-[10px] tracking-wider">Contact Number</span>
+                            <span id="rPhone" class="font-black text-lg opacity-100 text-black"></span>
+                        </div>
+                        <div class="flex justify-between border-b border-gray-200 pb-2">
+                            <span class="text-gray-500 font-bold uppercase text-[10px] tracking-wider">Item Details</span>
+                            <span id="rProd" class="font-black text-lg opacity-100 text-black"></span>
+                        </div>
+                        <div class="flex justify-between pt-2">
+                            <span class="text-gray-500 font-bold uppercase text-[10px] tracking-wider">Total Amount</span>
+                            <span class="font-black text-3xl text-blue-600 opacity-100"><span id="rAmount"></span> TK</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 grid grid-cols-2 gap-4 border-t-2 border-black pt-6">
+                    <div class="space-y-1">
+                        <p class="text-blue-600 uppercase mb-2 tracking-tighter font-black text-[12px]">Support Emails:</p>
+                        <p class="text-black opacity-100 font-bold text-[12px]">amr.shopping.bd@gmail.com</p>
+                        <p class="text-black opacity-100 font-bold text-[12px]">support.amrshop@gmail.com</p>
+                        <p class="text-black opacity-100 font-bold text-[12px]">admin.amrshop@gmail.com</p>
+                    </div>
+                    <div class="space-y-1 text-right">
+                        <p class="text-blue-600 uppercase mb-2 tracking-tighter font-black text-[12px]">Help Line & WhatsApp:</p>
+                        <p class="text-black opacity-100 font-bold text-[12px]">Helpline: 09658058019</p>
+                        <p class="text-black opacity-100 font-bold text-[12px]">WA: 01727003670</p>
+                        <p class="text-black opacity-100 font-bold text-[12px]">WA: 01316487435</p>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-around items-center bg-slate-50 p-4 border border-dashed border-black">
+                    <div class="text-center">
+                        <div id="qrApp" class="mb-2"></div>
+                        <p class="text-[8px] font-black text-black">https://amrshop.apk.com</p>
+                        <p class="text-[7px] text-blue-600 uppercase mt-1 font-black">Download App</p>
+                    </div>
+                    <div class="text-center">
+                        <div id="qrShop" class="mb-2"></div>
+                        <p class="text-[8px] font-black text-black">https://amrshop.zatiq.app</p>
+                        <p class="text-[7px] text-blue-600 uppercase mt-1 font-black">Visit Our Shop</p>
+                    </div>
+                </div>
+
+                <div class="mt-12 flex justify-between items-end">
+                    <div class="text-[8px] text-black opacity-100 uppercase font-black italic">
+                        * This is a secure transaction record.<br>
+                        * Verification available via QR scan.<br>
+                        * Computer Generated Document.
+                    </div>
+                    <div class="text-center">
+                        <div class="w-48 border-b-2 border-black mb-1"></div>
+                        <p class="text-[10px] font-black uppercase tracking-tighter text-black">Owner / Manager Signature</p>
+                        <p class="text-[8px] text-gray-600 uppercase font-bold">Amr Shop Official Authority</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Firebase Config (Using your existing DB)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCszHlzvt0GY-a0V6K01QyCK52vCWYsdzs",
+            authDomain: "amr-shop-hishab.firebaseapp.com",
+            projectId: "amr-shop-hishab",
+            storageBucket: "amr-shop-hishab.firebasestorage.app",
+            messagingSenderId: "816061374493",
+            appId: "1:816061374493:web:55b617042f43c2851066f4"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Find and Generate Receipt
+        window.findReceipt = async () => {
+            const sidInput = document.getElementById('searchID');
+            const sid = sidInput.value.trim();
+            if(!sid) return alert("Please enter a Transaction ID");
+
+            const btn = document.getElementById('findBtn');
+            btn.innerText = "SEARCHING...";
+            btn.disabled = true;
+
+            try {
+                const snap = await getDoc(doc(db, "receipts", sid));
+                if(snap.exists()) {
+                    await generateFinalImage(snap.data());
+                } else {
+                    alert("No record found with this ID. Please check and try again.");
+                }
+            } catch (error) {
+                console.error("Firebase Error:", error);
+                alert("Connection Error. Please check your internet connection.");
+            } finally {
+                btn.innerText = "FIND";
+                btn.disabled = false;
+            }
+        };
+
+        async function generateFinalImage(data) {
+            document.getElementById('rID').innerText = data.id;
+            document.getElementById('rDate').innerText = data.date;
+            document.getElementById('rName').innerText = data.name;
+            document.getElementById('rPhone').innerText = data.phone;
+            document.getElementById('rAmount').innerText = data.amount;
+            document.getElementById('rProd').innerText = data.product;
+
+            document.getElementById('qrApp').innerHTML = "";
+            document.getElementById('qrShop').innerHTML = "";
+            new QRCode(document.getElementById("qrApp"), { text: "https://amrshop.apk.com", width: 70, height: 70 });
+            new QRCode(document.getElementById("qrShop"), { text: "https://amrshop.zatiq.app", width: 70, height: 70 });
+
+            // Ensure images and fonts are loaded before capturing
+            await new Promise(r => setTimeout(r, 1000)); 
+            
+            const canvas = await html2canvas(document.getElementById('receiptDesign'), { 
+                useCORS: true, 
+                scale: 4, 
+                backgroundColor: "#ffffff"
+            });
+            const link = document.createElement('a');
+            link.download = `RECOVERED_${data.id}_AMR_SHOP.png`;
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+        }
+    </script>
+</body>
+</html>
