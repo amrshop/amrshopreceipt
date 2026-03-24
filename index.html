@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="ByykX6qaniRV46wT76IzXF1ibuTM_aa8Ylof0NFcOWY" />
+    
     <title>AMR SHOP - Customer Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -143,7 +145,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Firebase Config (Using your existing DB)
         const firebaseConfig = {
             apiKey: "AIzaSyCszHlzvt0GY-a0V6K01QyCK52vCWYsdzs",
             authDomain: "amr-shop-hishab.firebaseapp.com",
@@ -156,7 +157,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Find and Generate Receipt
         window.findReceipt = async () => {
             const sidInput = document.getElementById('searchID');
             const sid = sidInput.value.trim();
@@ -195,7 +195,6 @@
             new QRCode(document.getElementById("qrApp"), { text: "https://amrshop.apk.com", width: 70, height: 70 });
             new QRCode(document.getElementById("qrShop"), { text: "https://amrshop.zatiq.app", width: 70, height: 70 });
 
-            // Ensure images and fonts are loaded before capturing
             await new Promise(r => setTimeout(r, 1000)); 
             
             const canvas = await html2canvas(document.getElementById('receiptDesign'), { 
